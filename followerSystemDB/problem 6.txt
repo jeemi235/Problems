@@ -1,0 +1,136 @@
+problem 6 
+
+1.Get own following list 
+
+2.Get own follower list 
+
+3.Get another user following list with mentioning you are following or follower of them. 
+
+4.Get another user follower list with mentioning you are following or follower of them. 
+
+5.Search follower/following by name 
+
+
+
+Queries
+
+1.select following_id  from following where follower_id  ='3';
+
+2.select follower_id from following where following_id ='3';
+
+3.following_list of id 3 and my id is 2
+
+select  following_id ,case when 
+following_id in (select following_id from "following" f2 where follower_id='2')
+and follower_id='3' 
+then 'true' else 'false' end as is_following 
+from "following" f where follower_id ='3';
+
+select
+	users.id,
+	users.first_name,
+	users.last_name,
+	if((
+	select
+		true
+	from
+		"following"
+	where
+		follower_id = users.id
+		and following_id = 2),
+	true,
+	false) as isFollower,
+	if((
+	select
+		true
+	from
+		"following"
+	where
+		following_id = users.id
+		and follower_id = 2),
+	true,
+	false ) as isFollowing
+from
+	"following"
+left join users on
+	users.id = following_id
+where
+	follower_id = 3;
+
+
+4.followers_list of id 14 my id 15
+
+select follower_id, case when 
+follower_id in (select follower_id from "following" f2  where following_id ='15')
+and following_id ='14'
+then 'true' else 'false' end as is_follower 
+from "following" f where following_id ='14';
+
+select
+	users.id,
+	users.first_name,
+	users.last_name,
+	if((
+	select
+		true
+	from
+		"following"
+	where
+		following_id = users.id
+		and follower_id = 2),
+	true,
+	false) as isFollowing,
+	if((
+	select
+		true
+	from
+		"following"
+	where
+		follower_id = users.id
+		and following_id = 2),
+	true,
+	false ) as isFollower
+from
+	"following"
+left join users on
+	users.id = follower_id
+where
+	following_id = 3;
+
+
+
+5.select * from users u join 
+following f on f.following_id='25'
+where f.follower_id=u.id and u.full_name ilike '%o%';
+
+select
+	users.id,
+	users.first_name,
+	users.last_name,
+	if((
+	select
+		true
+	from
+		"following"
+	where
+		follower_id = users.id
+		and following_id = 2),
+	true,
+	false) as isFollower,
+	if((
+	select
+		true
+	from
+		"following"
+	where
+		following_id = users.id
+		and follower_id = 2),
+	true,
+	false ) as isFollowing
+from
+	"following"
+left join users on
+	users.id = following_id
+where
+	follower_id = 3
+and users.full_name  ilike '%sr%';
